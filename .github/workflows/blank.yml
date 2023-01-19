@@ -93,6 +93,7 @@ jobs:
       - name: Creat application-live.properties file
         run: |
           echo "${{ secrets.SPRING_BOOT_APPLICATION_PROPERTIES }}" > deployment/templates/application-live.properties
+
       - name: Build kustomize deployment config
         run: ./deployment/deployment.sh
 

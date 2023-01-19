@@ -9,4 +9,4 @@ secretGenerator:
   - name: $APP_NAME-api-properties
     namespace: $NAMESPACE
     files:
-      - application.properties
+      - application-live.properties
