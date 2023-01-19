@@ -13,6 +13,6 @@ LABEL BRANCH=${GIT_BRANCH}
 LABEL COMMIT=${GIT_COMMIT}
 LABEL PROJECT="graph-creator-backend"
 
-COPY ./build/libs/ .
+COPY ../build/libs/ .
 
 ENTRYPOINT ["java","-jar","graph-0.0.1-SNAPSHOT.jar"]
