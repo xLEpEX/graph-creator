@@ -6,15 +6,15 @@ metadata:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: $APP_NAME-api
+  name: $APP_NAME
   namespace: $NAMESPACE
   labels:
-    app: $APP_NAME-api
+    app: $APP_NAME
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: $APP_NAME-api
+      app: $APP_NAME
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -23,25 +23,37 @@ spec:
   template:
     metadata:
       labels:
-        app: $APP_NAME-api
+        app: $APP_NAME
     spec:
       containers:
-        - name: $APP_NAME-api
-          image: $IMAGE-api:$VERSION
+        - name: $APP_NAME
+          image: $IMAGE:$VERSION
           imagePullPolicy: Always
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: live
           volumeMounts:
-            - name: $APP_NAME-api-properties
+            - name: $APP_NAME-properties
               mountPath: "/etc/config"
               readOnly: true
           ports:
             - containerPort: 8080
               name: http
               protocol: TCP
+      containers:
+        - name: postgres
+          image: postgres:14.1-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432 
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-config
+                  key: password        
       volumes:
-        - name: $APP_NAME-api-properties
+        - name: $APP_NAME-properties
           secret:
-            secretName: $APP_NAME-api-properties
+            secretName: $APP_NAME-properties
             defaultMode: 420
