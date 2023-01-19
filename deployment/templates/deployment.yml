@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $APP_NAME-api
+  namespace: $NAMESPACE
+  labels:
+    app: $APP_NAME-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $APP_NAME-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: $APP_NAME-api
+    spec:
+      containers:
+        - name: $APP_NAME-api
+          image: $IMAGE-api:$VERSION
+          imagePullPolicy: Always
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: live
+            - name: SERVER_SERVLET_CONTEXT_PATH
+              value: /api
+
+          volumeMounts:
+            - name: $APP_NAME-api-properties
+              mountPath: /app/config
+              readOnly: true
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+      volumes:
+        - name: $APP_NAME-api-properties
+          secret:
+            secretName: $APP_NAME-api-properties
+            defaultMode: 420
