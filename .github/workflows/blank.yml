@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew bootJar
 
       - name: Tar build
-        run: tar -czf ~/backend.tgz ./build
+        run: tar -czf ~/backend.tgz ./api/build
 
       - uses: actions/upload-artifact@v3
         if: always()
