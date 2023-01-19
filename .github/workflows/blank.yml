@@ -58,7 +58,12 @@ jobs:
 
       - name: Untar it
         run: |
-          tar -xzf ~/backend.tgz ./api/build
+          tar -xzf ~/backend.tgz ./build
+
+      - name: cp build
+        run: |
+          sudo cp ./build ./api/build
+
       - name: list
         run: |
           sudo tree -a
