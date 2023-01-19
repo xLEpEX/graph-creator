@@ -92,7 +92,7 @@ jobs:
       - uses: imranismail/setup-kustomize@v2
       - name: Creat application-live.properties file
         run: |
-          echo "${{ secrets.SPRING_BOOT_APPLICATION_PROPERTIES }}" > deployment/template/application-live.properties
+          echo "${{ secrets.SPRING_BOOT_APPLICATION_PROPERTIES }}" > deployment/templates/application-live.properties
       - name: Build kustomize deployment config
         run: ./deployment/deployment-apply.sh
       - uses: actions-hub/kubectl@v1.26.0
