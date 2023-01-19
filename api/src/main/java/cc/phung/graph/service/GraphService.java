@@ -1,9 +1,9 @@
 package cc.phung.graph.service;
 
 
-import cc.phung.graph.models.dtos.EdgeDTO;
+import cc.phung.graph.models.entry.EdgeEntry;
 import cc.phung.graph.models.dtos.GraphDTO;
-import cc.phung.graph.models.dtos.NodeDTO;
+import cc.phung.graph.models.entry.NodeEntry;
 import cc.phung.graph.repo.EdgeRepo;
 import cc.phung.graph.repo.NodeRepo;
 import net.minidev.json.JSONObject;
@@ -45,7 +45,7 @@ public class GraphService {
     public ResponseEntity getTopological() {
         final var edges = new ArrayList<>(edgeRepo.findAll());
         final var nodes = new ArrayList<>(nodeRepo.findAll());
-        final var sortedNods = new ArrayList<NodeDTO>();
+        final var sortedNods = new ArrayList<NodeEntry>();
         final var stackNodes = new Stack<String>();
 
         var loop = false;
@@ -75,7 +75,7 @@ public class GraphService {
         if(loop) {
             return getDefaultResponse(HttpStatus.NOT_FOUND, "no topological sort available due to cycle dependency");
         }
-        return new ResponseEntity<ArrayList<NodeDTO>>(sortedNods, HttpStatus.OK);
+        return new ResponseEntity<ArrayList<NodeEntry>>(sortedNods, HttpStatus.OK);
     }
 
     /**
@@ -84,7 +84,7 @@ public class GraphService {
      * @param stackNodes the stacked nodes
      * @return true if we detected a cycle dependency
      */
-    private boolean checkForCycleDependency(List<EdgeDTO> connections, Stack<String> stackNodes) {
+    private boolean checkForCycleDependency(List<EdgeEntry> connections, Stack<String> stackNodes) {
         var cycleDetected = false;
         for (var nodeDTO : stackNodes) {
             if (connections.stream().anyMatch(e -> e.getDestionantionId().equals(nodeDTO))) {
@@ -102,19 +102,19 @@ public class GraphService {
      * @param sortedNods visited nodes
      * @return List of remaining connections
      */
-    private List<EdgeDTO> getFilteredConnections(List<EdgeDTO> edges, String activeNodeId, ArrayList<NodeDTO> sortedNods) {
+    private List<EdgeEntry> getFilteredConnections(List<EdgeEntry> edges, String activeNodeId, ArrayList<NodeEntry> sortedNods) {
        return edges.stream().filter(edge -> edge.getSourceId().equals(activeNodeId) && sortedNods.stream().noneMatch(e -> e.getUuid().equals(edge.getDestionantionId()))).toList();
     }
 
 
     /**
      * add a new node to the graph or override an existing
-     * @param nodeDTO node object
+     * @param nodeEntry node object
      * @return ResponseEntity of the status of the request
      */
     //müsste mann design technisch entscheiden ob direkt an diesem endpoint eine node überschreiben werden darf oder dafür ein extra endpoint angelegt werden sollte
-    public ResponseEntity<JSONObject> insertNode(NodeDTO nodeDTO) {
-        nodeRepo.save(nodeDTO);
+    public ResponseEntity<JSONObject> insertNode(NodeEntry nodeEntry) {
+        nodeRepo.save(nodeEntry);
         return getDefaultResponse(HttpStatus.OK, "node have been added successfully");
     };
 
@@ -124,7 +124,7 @@ public class GraphService {
      * @return ResponseEntity of the status of the request
      */
     public ResponseEntity<JSONObject> removeNode(String uuid) {
-        var removeEdges = edgeRepo.findBySourceIdOrDestionantionId(uuid, uuid).stream().map(EdgeDTO::getUuid).toList();
+        var removeEdges = edgeRepo.findBySourceIdOrDestionantionId(uuid, uuid).stream().map(EdgeEntry::getUuid).toList();
         edgeRepo.deleteByUuidIn(removeEdges);
         var deleted = nodeRepo.deleteByUuid(uuid);
         if(deleted == 0) {
@@ -135,42 +135,42 @@ public class GraphService {
 
     /**
      * Add a new Edge to the Graph or override an existing
-     * @param edgeDTO edge object with source and destination id of the nodes
+     * @param edgeEntry edge object with source and destination id of the nodes
      * @return ResponseEntity of the status of the request
      */
-    public ResponseEntity<JSONObject> insertEdge(EdgeDTO edgeDTO) {
-        if(!selfLinkingAllowed && isSelfLinking(edgeDTO)) {
+    public ResponseEntity<JSONObject> insertEdge(EdgeEntry edgeEntry) {
+        if(!selfLinkingAllowed && isSelfLinking(edgeEntry)) {
             return getDefaultResponse(HttpStatus.BAD_REQUEST, "self linking is not enabled");
         }
         if(!bothDirectionAllowed) {
-            if(isToDirectionLinking(edgeDTO)) { //reduce unnecessary query
+            if(isToDirectionLinking(edgeEntry)) { //reduce unnecessary query
                 return getDefaultResponse(HttpStatus.BAD_REQUEST, "both directing is not allowed");
             }
         };
 
-        var sourceNode = nodeRepo.findByUuid(edgeDTO.getSourceId());
-        var destinationNode = nodeRepo.findByUuid(edgeDTO.getDestionantionId());
+        var sourceNode = nodeRepo.findByUuid(edgeEntry.getSourceId());
+        var destinationNode = nodeRepo.findByUuid(edgeEntry.getDestionantionId());
         if(sourceNode.isEmpty()) {
             return getDefaultResponse(HttpStatus.BAD_REQUEST, "the source id is invalid");
         }
         if(destinationNode.isEmpty()) {
             return getDefaultResponse(HttpStatus.BAD_REQUEST, "the destination id is invalid");
         }
-        edgeRepo.save(edgeDTO);
+        edgeRepo.save(edgeEntry);
         return getDefaultResponse(HttpStatus.OK, "edge has been saved successfully");
     };
 
     /**
      * check if you try to link a node to itself
-     * @param edgeDTO edge with the linking information
+     * @param edgeEntry edge with the linking information
      * @return boolean if it is self linking
      */
-    private boolean isSelfLinking(EdgeDTO edgeDTO) {
-        return edgeDTO.getDestionantionId().equals(edgeDTO.getSourceId());
+    private boolean isSelfLinking(EdgeEntry edgeEntry) {
+        return edgeEntry.getDestionantionId().equals(edgeEntry.getSourceId());
     }
 
-    private boolean isToDirectionLinking(EdgeDTO edgeDTO) {
-        return edgeRepo.existsBySourceIdAndDestionantionId(edgeDTO.getDestionantionId(), edgeDTO.getSourceId());
+    private boolean isToDirectionLinking(EdgeEntry edgeEntry) {
+        return edgeRepo.existsBySourceIdAndDestionantionId(edgeEntry.getDestionantionId(), edgeEntry.getSourceId());
     }
 
 

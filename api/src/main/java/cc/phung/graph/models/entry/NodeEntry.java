@@ -1,4 +1,4 @@
-package cc.phung.graph.models.dtos;
+package cc.phung.graph.models.entry;
 
 
 import lombok.*;
@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Entity(name = "Node")
 @Table(name = "nodes")
-public class NodeDTO {
+public class NodeEntry {
     @Id
     private String uuid;
     private String value;

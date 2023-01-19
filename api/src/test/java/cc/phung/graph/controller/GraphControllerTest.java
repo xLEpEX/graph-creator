@@ -2,9 +2,9 @@ package cc.phung.graph.controller;
 
 
 import cc.phung.graph.GraphApplication;
-import cc.phung.graph.models.dtos.EdgeDTO;
+import cc.phung.graph.models.entry.EdgeEntry;
 import cc.phung.graph.models.dtos.GraphDTO;
-import cc.phung.graph.models.dtos.NodeDTO;
+import cc.phung.graph.models.entry.NodeEntry;
 import cc.phung.graph.repo.EdgeRepo;
 import cc.phung.graph.repo.NodeRepo;
 import cc.phung.graph.service.GraphService;
@@ -42,23 +42,23 @@ public class GraphControllerTest {
     @Autowired
     private GraphService graphService;
 
-    List<NodeDTO> defaultMockNodeList = List.of(
-            new NodeDTO("node-id-1", "cool", 231,321),
-            new NodeDTO("node-id-2", "cool", 231,321),
-            new NodeDTO("node-id-3", "cool", 231,321),
-            new NodeDTO("node-id-4", "cool", 231,321),
-            new NodeDTO("node-id-5", "cool", 231,321),
-            new NodeDTO("node-id-6", "cool", 231,321),
-            new NodeDTO("node-id-7", "cool", 231,321)
+    List<NodeEntry> defaultMockNodeList = List.of(
+            new NodeEntry("node-id-1", "cool", 231,321),
+            new NodeEntry("node-id-2", "cool", 231,321),
+            new NodeEntry("node-id-3", "cool", 231,321),
+            new NodeEntry("node-id-4", "cool", 231,321),
+            new NodeEntry("node-id-5", "cool", 231,321),
+            new NodeEntry("node-id-6", "cool", 231,321),
+            new NodeEntry("node-id-7", "cool", 231,321)
     );
-    List<EdgeDTO> defaultMockEdgeList = List.of(
-            new EdgeDTO("edge-id-1", "node-id-1", "node-id-3"),
-            new EdgeDTO("edge-id-2", "node-id-1", "node-id-2"),
-            new EdgeDTO("edge-id-3", "node-id-2", "node-id-3"),
-            new EdgeDTO("edge-id-4", "node-id-4", "node-id-3"),
-            new EdgeDTO("edge-id-5", "node-id-3", "node-id-5"),
-            new EdgeDTO("edge-id-6", "node-id-5", "node-id-6"),
-            new EdgeDTO("edge-id-7", "node-id-6", "node-id-7")
+    List<EdgeEntry> defaultMockEdgeList = List.of(
+            new EdgeEntry("edge-id-1", "node-id-1", "node-id-3"),
+            new EdgeEntry("edge-id-2", "node-id-1", "node-id-2"),
+            new EdgeEntry("edge-id-3", "node-id-2", "node-id-3"),
+            new EdgeEntry("edge-id-4", "node-id-4", "node-id-3"),
+            new EdgeEntry("edge-id-5", "node-id-3", "node-id-5"),
+            new EdgeEntry("edge-id-6", "node-id-5", "node-id-6"),
+            new EdgeEntry("edge-id-7", "node-id-6", "node-id-7")
             //new EdgeDTO("edge-id-1", "node-id-1", "node-id-3")
     );
 
@@ -82,13 +82,13 @@ public class GraphControllerTest {
     @DisplayName("Test if the Topological endpoint returns the right json content")
     public void topologicalNormalTest() throws Exception {
 
-        var nodeList = new ArrayList<NodeDTO>(List.of(new NodeDTO("node-id-4", "cool", 231,321),
-                new NodeDTO("node-id-1", "cool", 231,321),
-                new NodeDTO("node-id-2", "cool", 231,321),
-                new NodeDTO("node-id-3", "cool", 231,321),
-                new NodeDTO("node-id-5", "cool", 231,321),
-                new NodeDTO("node-id-6", "cool", 231,321),
-                new NodeDTO("node-id-7", "cool", 231,321)));
+        var nodeList = new ArrayList<NodeEntry>(List.of(new NodeEntry("node-id-4", "cool", 231,321),
+                new NodeEntry("node-id-1", "cool", 231,321),
+                new NodeEntry("node-id-2", "cool", 231,321),
+                new NodeEntry("node-id-3", "cool", 231,321),
+                new NodeEntry("node-id-5", "cool", 231,321),
+                new NodeEntry("node-id-6", "cool", 231,321),
+                new NodeEntry("node-id-7", "cool", 231,321)));
         //var refResponse = new ResponseEntity<ArrayList<NodeDTO>>(new ArrayList<>(nodeList), HttpStatus.OK);
 
         Gson gson = new Gson();
@@ -105,15 +105,15 @@ public class GraphControllerTest {
     @Test
     @DisplayName("Test Topological endpoint with cycle dependency")
     public void topologicalCycleDependencyTest() throws Exception {
-        List<EdgeDTO> cycleMockEdgeList = List.of(
-                new EdgeDTO("edge-id-1", "node-id-1", "node-id-3"),
-                new EdgeDTO("edge-id-2", "node-id-1", "node-id-2"),
-                new EdgeDTO("edge-id-3", "node-id-2", "node-id-3"),
-                new EdgeDTO("edge-id-4", "node-id-4", "node-id-3"),
-                new EdgeDTO("edge-id-5", "node-id-3", "node-id-5"),
-                new EdgeDTO("edge-id-6", "node-id-5", "node-id-6"),
-                new EdgeDTO("edge-id-7", "node-id-6", "node-id-7"),
-                new EdgeDTO("edge-id-8", "node-id-5", "node-id-2") // connect 5 -> 2
+        List<EdgeEntry> cycleMockEdgeList = List.of(
+                new EdgeEntry("edge-id-1", "node-id-1", "node-id-3"),
+                new EdgeEntry("edge-id-2", "node-id-1", "node-id-2"),
+                new EdgeEntry("edge-id-3", "node-id-2", "node-id-3"),
+                new EdgeEntry("edge-id-4", "node-id-4", "node-id-3"),
+                new EdgeEntry("edge-id-5", "node-id-3", "node-id-5"),
+                new EdgeEntry("edge-id-6", "node-id-5", "node-id-6"),
+                new EdgeEntry("edge-id-7", "node-id-6", "node-id-7"),
+                new EdgeEntry("edge-id-8", "node-id-5", "node-id-2") // connect 5 -> 2
         );
 
         when(nodeRepo.findAll()).thenReturn(defaultMockNodeList);

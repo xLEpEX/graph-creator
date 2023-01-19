@@ -1,4 +1,4 @@
-package cc.phung.graph.models.dtos;
+package cc.phung.graph.models.entry;
 
 
 import lombok.*;
@@ -16,7 +16,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @Entity(name = "Edge")
 @Table(name = "edges")
-public class EdgeDTO {
+public class EdgeEntry {
     @Id
     private String uuid;
 
@@ -28,8 +28,8 @@ public class EdgeDTO {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        EdgeDTO edgeDTO = (EdgeDTO) o;
-        return uuid != null && Objects.equals(uuid, edgeDTO.uuid);
+        EdgeEntry edgeEntry = (EdgeEntry) o;
+        return uuid != null && Objects.equals(uuid, edgeEntry.uuid);
     }
 
     @Override

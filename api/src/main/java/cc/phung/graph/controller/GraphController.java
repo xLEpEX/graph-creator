@@ -1,9 +1,9 @@
 package cc.phung.graph.controller;
 
 
-import cc.phung.graph.models.dtos.EdgeDTO;
+import cc.phung.graph.models.entry.EdgeEntry;
 import cc.phung.graph.models.dtos.GraphDTO;
-import cc.phung.graph.models.dtos.NodeDTO;
+import cc.phung.graph.models.entry.NodeEntry;
 import cc.phung.graph.service.GraphService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,8 +44,8 @@ public class GraphController {
 
     @Operation(summary = "add a node to the graph")
     @PostMapping("/nodes")
-    public ResponseEntity<JSONObject> addNode(@RequestBody NodeDTO nodeDTO) {
-        return graphService.insertNode(nodeDTO);
+    public ResponseEntity<JSONObject> addNode(@RequestBody NodeEntry nodeEntry) {
+        return graphService.insertNode(nodeEntry);
     };
 
     @Operation(summary = "Delete a node by uuid")
@@ -56,8 +56,8 @@ public class GraphController {
 
     @Operation(summary = "add a edge between to nodes to your graph")
     @PostMapping("/edges")
-    public ResponseEntity<JSONObject> addEdge(@RequestBody EdgeDTO edgeDTO) {
-        return  graphService.insertEdge(edgeDTO);
+    public ResponseEntity<JSONObject> addEdge(@RequestBody EdgeEntry edgeEntry) {
+        return  graphService.insertEdge(edgeEntry);
     };
 
     @Operation(summary = "delete a edge by uuid")
