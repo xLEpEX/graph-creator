@@ -71,6 +71,9 @@ jobs:
     name: Backend docker 🐬
     needs: [backend-test]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
     steps:
       - name: Add SHORT_SHA env property with commit short sha
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
@@ -97,6 +100,6 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       - name: Build Docker image
-        run: docker build ./api --tag ${{ secrets.REGISTRY_USERNAME }}/graph-api:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
+        run: docker build . --tag ${{ secrets.REGISTRY_USERNAME }}/graph-api:${SHORT_SHA} --build-arg=GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) --build-arg=GIT_COMMIT=${SHORT_SHA}
       - name: Push Docker image
         run: docker push ${{ secrets.REGISTRY_USERNAME }}/graph-api:${SHORT_SHA}
