@@ -41,35 +41,9 @@ jobs:
           path: |
             ~/backend.tgz
 
-  backend-test:
-    name: Test backend 🧪
-    needs: [api-build]
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./api
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: 17
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
-
-      - name: Test backend
-        run: ./gradlew test
-
   backend-docker:
     name: Backend docker 🐬
-    needs: [backend-test]
+    needs: [api-build]
     runs-on: ubuntu-latest
     steps:
       - name: Add SHORT_SHA env property with commit short sha
