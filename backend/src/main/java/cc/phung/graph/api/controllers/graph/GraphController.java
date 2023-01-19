@@ -31,8 +31,8 @@ public class GraphController {
     }
 
     @GetMapping("/topological")
-    public void getTopological() {
-
+    public ResponseEntity getTopological() {
+        return graphService.getTopological();
     }
 
     @PostMapping("/nodes")

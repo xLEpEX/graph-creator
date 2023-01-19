@@ -14,5 +14,7 @@ public interface EdgeRepo extends JpaRepository<EdgeDTO, String> {
     Integer deleteByUuid(final String uuid);
     List<EdgeDTO> findBySourceOrDestionantion(final String sourecId, final String destionationId);
 
+    boolean existsBySourceOrDestionantion(final String sourecId, final String destionationId);
+
     void deleteByUuidIn(List<String> uuid);
 }
