@@ -104,7 +104,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: docker.io/xlepex/graph-api:${{ steps.short-sha.outputs.sha }}
+          tags: ${{ secrets.REGISTRY_USERNAME }}/graph-api:${SHORT_SHA}
           build-args: |
             GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
             GIT_COMMIT=${{ steps.short-sha.outputs.sha }}
