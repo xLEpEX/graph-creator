@@ -75,8 +75,6 @@ jobs:
       - name: Add SHORT_SHA env property with commit short sha
         run: echo "SHORT_SHA=`echo ${GITHUB_SHA} | cut -c1-7`" >> $GITHUB_ENV
       - uses: actions/checkout@v2
-      - name: Create log folder
-        run: sudo mkdir -p /var/log/lepex/graph-api && sudo chmod -R 777 /var/log/lepex/graph-api
 
       - name: Download backend build result
         uses: actions/download-artifact@v2
@@ -87,6 +85,10 @@ jobs:
       - name: Untar it
         run: |
           tar -xzf ~/backend.tgz ./build
+      - name: list
+        run: |
+          sudo tree -a
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
       - name: Login to DockerHub
