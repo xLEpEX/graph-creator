@@ -1,4 +1,4 @@
-package cc.phung.graph.api.models.dtos;
+package cc.phung.graph.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

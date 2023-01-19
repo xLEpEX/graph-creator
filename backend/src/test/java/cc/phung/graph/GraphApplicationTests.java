@@ -1,10 +1,10 @@
-package cc.phung.graph.api;
+package cc.phung.graph;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ApplicationTests {
+class GraphApplicationTests {
 
 	@Test
 	void contextLoads() {

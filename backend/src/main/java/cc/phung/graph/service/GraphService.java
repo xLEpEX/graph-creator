@@ -1,17 +1,17 @@
-package cc.phung.graph.api.services;
+package cc.phung.graph.service;
 
-import cc.phung.graph.api.models.dtos.EdgeDTO;
-import cc.phung.graph.api.models.dtos.GraphDTO;
-import cc.phung.graph.api.models.dtos.NodeDTO;
-import cc.phung.graph.api.repo.EdgeRepo;
-import cc.phung.graph.api.repo.NodeRepo;
+
+import cc.phung.graph.models.dtos.EdgeDTO;
+import cc.phung.graph.models.dtos.GraphDTO;
+import cc.phung.graph.models.dtos.NodeDTO;
+import cc.phung.graph.repo.EdgeRepo;
+import cc.phung.graph.repo.NodeRepo;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +43,8 @@ public class GraphService {
      * @return ResponseEntity of the nodes in topological oder or a error message if any problems occurs
      */
     public ResponseEntity getTopological() {
-        final var edges = edgeRepo.findAll();
-        final var nodes = nodeRepo.findAll();
+        final var edges = new ArrayList<>(edgeRepo.findAll());
+        final var nodes = new ArrayList<>(nodeRepo.findAll());
         final var sortedNods = new ArrayList<NodeDTO>();
         final var stackNodes = new Stack<String>();
 
@@ -68,7 +68,7 @@ public class GraphService {
                 sortedNods.add(0, foundNode);
                 nodes.remove(foundNode);
             } else {
-                stackNodes.add(connections.get(0).getDestionantion());
+                stackNodes.add(connections.get(0).getDestionantionId());
             }
         }
 
@@ -87,7 +87,7 @@ public class GraphService {
     private boolean checkForCycleDependency(List<EdgeDTO> connections, Stack<String> stackNodes) {
         var cycleDetected = false;
         for (var nodeDTO : stackNodes) {
-            if (connections.stream().anyMatch(e -> e.getDestionantion().equals(nodeDTO))) {
+            if (connections.stream().anyMatch(e -> e.getDestionantionId().equals(nodeDTO))) {
                 cycleDetected = true;
                 break;
             }
@@ -103,7 +103,7 @@ public class GraphService {
      * @return List of remaining connections
      */
     private List<EdgeDTO> getFilteredConnections(List<EdgeDTO> edges, String activeNodeId, ArrayList<NodeDTO> sortedNods) {
-       return edges.stream().filter(edge -> edge.getSource().equals(activeNodeId) && sortedNods.stream().noneMatch(e -> e.getUuid().equals(edge.getDestionantion()))).toList();
+       return edges.stream().filter(edge -> edge.getSourceId().equals(activeNodeId) && sortedNods.stream().noneMatch(e -> e.getUuid().equals(edge.getDestionantionId()))).toList();
     }
 
 
@@ -124,7 +124,7 @@ public class GraphService {
      * @return ResponseEntity of the status of the request
      */
     public ResponseEntity<JSONObject> removeNode(String uuid) {
-        var removeEdges = edgeRepo.findBySourceOrDestionantion(uuid, uuid).stream().map(EdgeDTO::getUuid).toList();
+        var removeEdges = edgeRepo.findBySourceIdOrDestionantionId(uuid, uuid).stream().map(EdgeDTO::getUuid).toList();
         edgeRepo.deleteByUuidIn(removeEdges);
         var deleted = nodeRepo.deleteByUuid(uuid);
         if(deleted == 0) {
@@ -148,8 +148,8 @@ public class GraphService {
             }
         };
 
-        var sourceNode = nodeRepo.findByUuid(edgeDTO.getSource());
-        var destinationNode = nodeRepo.findByUuid(edgeDTO.getDestionantion());
+        var sourceNode = nodeRepo.findByUuid(edgeDTO.getSourceId());
+        var destinationNode = nodeRepo.findByUuid(edgeDTO.getDestionantionId());
         if(sourceNode.isEmpty()) {
             return getDefaultResponse(HttpStatus.BAD_REQUEST, "the source id is invalid");
         }
@@ -166,11 +166,11 @@ public class GraphService {
      * @return boolean if it is self linking
      */
     private boolean isSelfLinking(EdgeDTO edgeDTO) {
-        return edgeDTO.getDestionantion().equals(edgeDTO.getSource());
+        return edgeDTO.getDestionantionId().equals(edgeDTO.getSourceId());
     }
 
     private boolean isToDirectionLinking(EdgeDTO edgeDTO) {
-        return edgeRepo.existsBySourceOrDestionantion(edgeDTO.getDestionantion(), edgeDTO.getSource());
+        return edgeRepo.existsBySourceIdAndDestionantionId(edgeDTO.getDestionantionId(), edgeDTO.getSourceId());
     }
 
 
@@ -181,7 +181,7 @@ public class GraphService {
      */
     public ResponseEntity<JSONObject> removeEdge(String uuid) {
         var deleted = edgeRepo.deleteByUuid(uuid);
-        if(deleted == 0) {
+        if(deleted == 1) {
             return getDefaultResponse(HttpStatus.NOT_FOUND, "the provided edge does not exists");
         }
         return getDefaultResponse(HttpStatus.OK, "edge have been remove successfully");
@@ -193,7 +193,7 @@ public class GraphService {
      * @param message message of the response
      * @return Response entity with message and status code
      */
-    public ResponseEntity<JSONObject> getDefaultResponse(HttpStatusCode httpStatus, String message) {
+    public ResponseEntity<JSONObject> getDefaultResponse(HttpStatus httpStatus, String message) {
         JSONObject response = new JSONObject();
         response.put("message", message);
         return new ResponseEntity<JSONObject>(response, httpStatus);

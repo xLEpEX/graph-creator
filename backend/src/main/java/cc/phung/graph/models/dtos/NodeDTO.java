@@ -1,9 +1,11 @@
-package cc.phung.graph.api.models.dtos;
+package cc.phung.graph.models.dtos;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
 import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Getter
 @Setter

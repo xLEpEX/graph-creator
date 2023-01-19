@@ -1,11 +1,12 @@
-package cc.phung.graph.api.models.dtos;
+package cc.phung.graph.models.dtos;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Getter
@@ -19,9 +20,9 @@ public class EdgeDTO {
     @Id
     private String uuid;
 
-    private String source;
+    private String sourceId;
 
-    private String destionantion;
+    private String destionantionId;
 
     @Override
     public boolean equals(Object o) {
