@@ -62,7 +62,7 @@ jobs:
 
       - name: cp build
         run: |
-          sudo cp ./build ./api/build
+          sudo cp -R ./build ./api/build
 
       - name: list
         run: |
