@@ -95,7 +95,9 @@ jobs:
           echo "${{ secrets.SPRING_BOOT_APPLICATION_PROPERTIES }}" > deployment/templates/application-live.properties
       - name: Build kustomize deployment config
         run: ./deployment/deployment.sh
-      - uses: actions-hub/kubectl@v1.26.0
+
+      - name: apply deloyment
+        uses: actions-hub/kubectl@v1.26.0
         env:
           KUBE_CONFIG: ${{ secrets.K8S_CONFIG }}
         with:
