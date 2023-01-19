@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew bootJar
 
       - name: Tar build
-        run: tar -czf ~/backend.tgz ./api/build
+        run: tar -czf ~/backend.tgz ./build
 
       - uses: actions/upload-artifact@v3
         if: always()
@@ -58,7 +58,7 @@ jobs:
 
       - name: Untar it
         run: |
-          tar -xzf ~/backend.tgz ./build
+          tar -xzf ~/backend.tgz ./api/build
       - name: list
         run: |
           sudo tree -a
