@@ -6,7 +6,7 @@ resources:
   - ingress.yml
 
 secretGenerator:
-  - name: $APP_NAME-api-properties
+  - name: $APP_NAME-properties
     namespace: $NAMESPACE
     files:
       - application-live.properties
